@@ -1,4 +1,5 @@
-﻿using StroyToday.Application.Interfaces;
+﻿using StroyToday.Application.Helpers;
+using StroyToday.Application.Interfaces;
 using StroyToday.Core.Dto;
 using StroyToday.Core.IRepositories;
 
@@ -31,20 +32,38 @@ namespace StroyToday.Application.Services
             await _userRepository.Add(userDto);
         }
 
-        public async Task<string> Login(string email, string password)
+        public async Task<GenericResult<string>> Login(string email, string password)
         {
+            var response = new GenericResult<string>()
+            {
+                IsSuccess = true
+            };
+
             var userDto = await _userRepository.GetByEmail(email);
 
-            var result = _passwordHasher.Verify(password, userDto.PasswordHash);
-
-            if (result == false)
+            if (userDto == null)
             {
-                throw new Exception("Failed to login");
+                response.Result = "User not found";
+                response.IsSuccess = false;
+
+                return response;
+            }
+
+            var checkPassword = _passwordHasher.Verify(password, userDto.PasswordHash);
+
+            if (checkPassword == false)
+            {
+                response.Result = "Incorrect Password";
+                response.IsSuccess = false;
+
+                return response;
             }
 
             var token = _jwtProvider.GenerateToken(userDto);
 
-            return token;
+            response.Result = token;
+
+            return response;
         }
     }
 }

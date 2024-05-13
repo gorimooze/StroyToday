@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StroyToday.Common.Helpers
+namespace StroyToday.Application.Helpers
 {
     public class GenericResult<T>
     {

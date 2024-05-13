@@ -25,14 +25,20 @@ namespace StroyToday.API.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IResult> Login(LoginUserRequest request)
+        public async Task<IActionResult> Login(LoginUserRequest request)
         {
-            var token = await _userService.Login(request.Email, request.Password);
-            var context = HttpContext;
+            var result = await _userService.Login(request.Email, request.Password);
 
-            context.Response.Cookies.Append("auth-token", token);
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Result);
+            }
 
-            return Results.Ok();
+            var token = result.Result;
+
+            HttpContext.Response.Cookies.Append("auth-token", token);
+
+            return Ok();
         }
     }
 }

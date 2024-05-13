@@ -37,7 +37,12 @@ namespace StroyToday.DataAccess.Repositories
         {
             var userEntity = await _context.Users
                 .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.Email == email) ?? throw new Exception();
+                .FirstOrDefaultAsync(u => u.Email == email);
+
+            if (userEntity == null)
+            {
+                return null;
+            }
 
             var userDto = new UserDto()
             {
