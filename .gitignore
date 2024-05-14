@@ -364,3 +364,4 @@ FodyWeavers.xsd
 
 # Ignore file with secret keys
 StroyToday.API/appsettings.json
+StroyToday.API/appsettings.Development.json
