@@ -4,6 +4,7 @@ using StroyToday.API.Extensions;
 using StroyToday.Application.Interfaces;
 using StroyToday.Application.Services;
 using StroyToday.Common.Auth;
+using StroyToday.Common.Azure;
 using StroyToday.Core.IRepositories;
 using StroyToday.DataAccess;
 using StroyToday.DataAccess.Repositories;
@@ -26,6 +27,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<AuthenticationHelper>();
+builder.Services.AddScoped<AzureHelper>();
 
 builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
