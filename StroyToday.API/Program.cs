@@ -24,8 +24,14 @@ builder.Services.AddDbContext<StroyTodayDbContext>(options =>
 });
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserCvRepository, UserCvRepository>();
+builder.Services.AddScoped<ISkillCategoryRepository, SkillCategoryRepository>();
+builder.Services.AddScoped<IUserToSkillCategoryRepository, UserToSkillCategoryRepository>();
+builder.Services.AddScoped<IPortfolioForUserCVRepository, PortfolioForUserCVRepository>();
 
-builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
+
 builder.Services.AddScoped<AuthenticationHelper>();
 builder.Services.AddScoped<AzureHelper>();
 

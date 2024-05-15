@@ -1,17 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StroyToday.API.Models.Auth;
+using StroyToday.Application.Interfaces;
 using StroyToday.Application.Services;
 using StroyToday.Common.Auth;
 
 namespace StroyToday.API.Controllers
 {
     [ApiController]
-    [Route("UserAuth")]
+    [Route("api/user-auth")]
     public class UserAuthController : ControllerBase
     {
-        private readonly UserService _userService;
+        private readonly IUserService _userService;
 
-        public UserAuthController(UserService userService)
+        public UserAuthController(IUserService userService)
         {
             _userService = userService;
         }
