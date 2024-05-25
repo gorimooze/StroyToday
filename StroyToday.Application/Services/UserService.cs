@@ -1,5 +1,6 @@
 ﻿using StroyToday.Application.Helpers;
 using StroyToday.Application.Interfaces;
+using StroyToday.Application.Interfaces.IServices;
 using StroyToday.Core.Dto;
 using StroyToday.Core.IRepositories;
 
@@ -43,7 +44,7 @@ namespace StroyToday.Application.Services
 
             if (userDto == null)
             {
-                response.Result = "User not found";
+                response.ErrorMessage = "User not found";
                 response.IsSuccess = false;
 
                 return response;
@@ -53,7 +54,7 @@ namespace StroyToday.Application.Services
 
             if (checkPassword == false)
             {
-                response.Result = "Incorrect Password";
+                response.ErrorMessage = "Incorrect Password";
                 response.IsSuccess = false;
 
                 return response;

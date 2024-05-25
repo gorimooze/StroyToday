@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace StroyToday.Core.IRepositories
 {
-    public interface IPortfolioForUserCVRepository
+    public interface IPortfolioForUserRepository
     {
-        Task Add(PortfolioForUserCVDto portfolioForUserCvDto);
+        Task Add(PortfolioForUserDto portfolioForUserDto);
     }
 }

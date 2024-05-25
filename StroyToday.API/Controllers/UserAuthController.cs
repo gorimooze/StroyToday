@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StroyToday.API.Models.Auth;
-using StroyToday.Application.Interfaces;
-using StroyToday.Application.Services;
-using StroyToday.Common.Auth;
+using StroyToday.Application.Interfaces.IServices;
 
 namespace StroyToday.API.Controllers
 {
@@ -32,7 +30,7 @@ namespace StroyToday.API.Controllers
 
             if (!result.IsSuccess)
             {
-                return BadRequest(result.Result);
+                return BadRequest(new { errorMessage = result.ErrorMessage });
             }
 
             var token = result.Result;

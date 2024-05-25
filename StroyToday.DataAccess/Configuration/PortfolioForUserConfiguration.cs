@@ -9,18 +9,18 @@ using StroyToday.DataAccess.Models;
 
 namespace StroyToday.DataAccess.Configuration
 {
-    public class PortfolioForUserCVConfiguration : IEntityTypeConfiguration<PortfolioForUserCV>
+    public class PortfolioForUserConfiguration : IEntityTypeConfiguration<PortfolioForUser>
     {
-        public void Configure(EntityTypeBuilder<PortfolioForUserCV> builder)
+        public void Configure(EntityTypeBuilder<PortfolioForUser> builder)
         {
             builder.HasKey(p => p.Id);
 
-            builder.Property(p => p.UserCVId)
+            builder.Property(p => p.UserId)
                 .IsRequired();
 
-            builder.HasOne(p => p.UserCV)
+            builder.HasOne(p => p.User)
                 .WithMany(u => u.Portfolios)
-                .HasForeignKey(p => p.UserCVId);
+                .HasForeignKey(p => p.UserId);
 
             builder.Property(p => p.ImageName)
                 .IsRequired();

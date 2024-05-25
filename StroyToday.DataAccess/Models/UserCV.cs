@@ -13,6 +13,5 @@ namespace StroyToday.DataAccess.Models
         public int UserId { get; set; }
 
         public User User { get; set; }
-        public ICollection<PortfolioForUserCV> Portfolios { get; set; }
     }
 }

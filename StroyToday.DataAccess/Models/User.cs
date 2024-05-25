@@ -14,6 +14,7 @@ namespace StroyToday.DataAccess.Models
         public string Email { get; set; }
 
         public ICollection<UserToSkillCategory> UserToSkillCategories { get; set; }
+        public ICollection<PortfolioForUser> Portfolios { get; set; }
         public UserCV UserCV { get; set; }
     }
 }

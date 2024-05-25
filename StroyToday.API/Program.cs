@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.EntityFrameworkCore;
 using StroyToday.API.Extensions;
 using StroyToday.Application.Interfaces;
+using StroyToday.Application.Interfaces.IServices;
 using StroyToday.Application.Services;
 using StroyToday.Common.Auth;
 using StroyToday.Common.Azure;
@@ -13,34 +14,51 @@ var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 var configuration = builder.Configuration;
 
-builder.Services.AddControllers();
-builder.Services.AddSwaggerGen();
+services.AddControllers();
+services.AddSwaggerGen();
 
-builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost3000",
+        builder => builder.WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()); 
+});
 
-builder.Services.AddDbContext<StroyTodayDbContext>(options =>
+services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
+services.Configure<AzureOptions>(builder.Configuration.GetSection(nameof(AzureOptions)));
+
+services.AddDbContext<StroyTodayDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString(nameof(StroyTodayDbContext)));
 });
 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserCvRepository, UserCvRepository>();
-builder.Services.AddScoped<ISkillCategoryRepository, SkillCategoryRepository>();
-builder.Services.AddScoped<IUserToSkillCategoryRepository, UserToSkillCategoryRepository>();
-builder.Services.AddScoped<IPortfolioForUserCVRepository, PortfolioForUserCVRepository>();
+//Repository for DI
+services.AddScoped<IUserRepository, UserRepository>();
+services.AddScoped<IUserCvRepository, UserCvRepository>();
+services.AddScoped<ISkillCategoryRepository, SkillCategoryRepository>();
+services.AddScoped<IUserToSkillCategoryRepository, UserToSkillCategoryRepository>();
+services.AddScoped<IPortfolioForUserRepository, PortfolioForUserRepository>();
 
-builder.Services.AddScoped<IUserService, UserService>();
+//Services for DI
+services.AddScoped<IUserService, UserService>();
+services.AddScoped<IUserCvService, UserCvService>();
+services.AddScoped<ISkillCategoryService, SkillCategoryService>();
+services.AddScoped<IPortfolioForUserService, PortfolioForUserService>();
 
 
-builder.Services.AddScoped<AuthenticationHelper>();
-builder.Services.AddScoped<AzureHelper>();
+services.AddScoped<AuthenticationHelper>();
+services.AddScoped<IAzureProvider, AzureProvider>();
 
-builder.Services.AddScoped<IJwtProvider, JwtProvider>();
-builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+services.AddScoped<IJwtProvider, JwtProvider>();
+services.AddScoped<IPasswordHasher, PasswordHasher>();
 
-builder.Services.AddApiAuthentication(configuration);
+services.AddApiAuthentication(configuration);
 
 var app = builder.Build();
+
+app.UseCors("AllowLocalhost3000");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -51,9 +69,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCookiePolicy(new CookiePolicyOptions()
+app.UseCookiePolicy(new CookiePolicyOptions
 {
-    MinimumSameSitePolicy = SameSiteMode.Strict,
+    MinimumSameSitePolicy = SameSiteMode.None,
     HttpOnly = HttpOnlyPolicy.Always,
     Secure = CookieSecurePolicy.Always
 });

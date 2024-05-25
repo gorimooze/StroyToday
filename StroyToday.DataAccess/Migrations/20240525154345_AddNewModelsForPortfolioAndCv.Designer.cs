@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StroyToday.DataAccess;
 
@@ -10,9 +11,11 @@ using StroyToday.DataAccess;
 namespace StroyToday.DataAccess.Migrations
 {
     [DbContext(typeof(StroyTodayDbContext))]
-    partial class StroyTodayDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240525154345_AddNewModelsForPortfolioAndCv")]
+    partial class AddNewModelsForPortfolioAndCv
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

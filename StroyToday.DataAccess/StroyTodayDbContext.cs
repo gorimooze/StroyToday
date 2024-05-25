@@ -18,13 +18,13 @@ namespace StroyToday.DataAccess
             modelBuilder.ApplyConfiguration(new UserCVConfiguration());
             modelBuilder.ApplyConfiguration(new SkillCategoryConfiguration());
             modelBuilder.ApplyConfiguration(new UserToSkillCategoryConfiguration());
-            modelBuilder.ApplyConfiguration(new PortfolioForUserCVConfiguration());
+            modelBuilder.ApplyConfiguration(new PortfolioForUserConfiguration());
         }
 
         public DbSet<User> Users { get; set; }
         public DbSet<UserCV> UserCVs { get; set; }
         public DbSet<SkillCategory> SkillCategories { get; set; }
         public DbSet<UserToSkillCategory> UserToSkillCategories { get; set; }
-        public DbSet<PortfolioForUserCV> Portfolios { get; set; }
+        public DbSet<PortfolioForUser> Portfolios { get; set; }
     }
 }
