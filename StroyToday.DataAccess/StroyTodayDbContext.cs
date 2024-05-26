@@ -19,6 +19,7 @@ namespace StroyToday.DataAccess
             modelBuilder.ApplyConfiguration(new SkillCategoryConfiguration());
             modelBuilder.ApplyConfiguration(new UserToSkillCategoryConfiguration());
             modelBuilder.ApplyConfiguration(new PortfolioForUserConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderConfiguration());
         }
 
         public DbSet<User> Users { get; set; }
@@ -26,5 +27,6 @@ namespace StroyToday.DataAccess
         public DbSet<SkillCategory> SkillCategories { get; set; }
         public DbSet<UserToSkillCategory> UserToSkillCategories { get; set; }
         public DbSet<PortfolioForUser> Portfolios { get; set; }
+        public DbSet<Order> Orders { get; set; }
     }
 }

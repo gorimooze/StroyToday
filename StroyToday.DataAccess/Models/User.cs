@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using StroyToday.Core.Enums;
 
 namespace StroyToday.DataAccess.Models
 {
@@ -16,5 +17,6 @@ namespace StroyToday.DataAccess.Models
         public ICollection<UserToSkillCategory> UserToSkillCategories { get; set; }
         public ICollection<PortfolioForUser> Portfolios { get; set; }
         public UserCV UserCV { get; set; }
+        public ICollection<Order> Orders { get; set; }
     }
 }

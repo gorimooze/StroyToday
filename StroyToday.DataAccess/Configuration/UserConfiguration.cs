@@ -31,6 +31,10 @@ namespace StroyToday.DataAccess.Configuration
             builder.HasOne(x => x.UserCV)
                 .WithOne(x => x.User)
                 .HasForeignKey<UserCV>(x => x.UserId);
+
+            builder.HasMany(x => x.Orders)
+                .WithOne(x => x.User)
+                .HasForeignKey(x => x.UserId);
         }
     }
 }

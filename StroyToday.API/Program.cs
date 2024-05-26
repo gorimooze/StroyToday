@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.EntityFrameworkCore;
 using StroyToday.API.Extensions;
-using StroyToday.Application.Interfaces;
 using StroyToday.Application.Interfaces.IServices;
+using StroyToday.Application.Interfaces;
 using StroyToday.Application.Services;
 using StroyToday.Common.Auth;
 using StroyToday.Common.Azure;
 using StroyToday.Core.IRepositories;
-using StroyToday.DataAccess;
 using StroyToday.DataAccess.Repositories;
+using StroyToday.DataAccess;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -23,11 +23,18 @@ builder.Services.AddCors(options =>
         builder => builder.WithOrigins("http://localhost:3000")
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowCredentials()); 
+            .AllowCredentials());
 });
 
 services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
 services.Configure<AzureOptions>(builder.Configuration.GetSection(nameof(AzureOptions)));
+
+// Настройка Redis-кэша
+services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = configuration.GetConnectionString("RedisConnection");
+    options.InstanceName = "RedisInstance";
+});
 
 services.AddDbContext<StroyTodayDbContext>(options =>
 {
@@ -40,13 +47,14 @@ services.AddScoped<IUserCvRepository, UserCvRepository>();
 services.AddScoped<ISkillCategoryRepository, SkillCategoryRepository>();
 services.AddScoped<IUserToSkillCategoryRepository, UserToSkillCategoryRepository>();
 services.AddScoped<IPortfolioForUserRepository, PortfolioForUserRepository>();
+services.AddScoped<IOrderRepository, OrderRepository>();
 
 //Services for DI
 services.AddScoped<IUserService, UserService>();
 services.AddScoped<IUserCvService, UserCvService>();
 services.AddScoped<ISkillCategoryService, SkillCategoryService>();
 services.AddScoped<IPortfolioForUserService, PortfolioForUserService>();
-
+services.AddScoped<IOrderService, OrderService>();
 
 services.AddScoped<AuthenticationHelper>();
 services.AddScoped<IAzureProvider, AzureProvider>();

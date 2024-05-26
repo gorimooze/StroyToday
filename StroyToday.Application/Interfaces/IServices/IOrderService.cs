@@ -8,9 +8,10 @@ using StroyToday.Core.Dto;
 
 namespace StroyToday.Application.Interfaces.IServices
 {
-    public interface IUserService
+    public interface IOrderService
     {
-        Task Register(string userName, string email, string password);
-        Task<GenericResult<LoginResponseDto>> Login(string email, string password);
+        Task Add(OrderDto orderDto);
+        Task<GenericResult<OrderDto>> GetById(int orderId);
+        Task<GenericResult<IList<OrderDto>>> GetAll();
     }
 }

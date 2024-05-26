@@ -33,9 +33,9 @@ namespace StroyToday.Application.Services
             await _userRepository.Add(userDto);
         }
 
-        public async Task<GenericResult<string>> Login(string email, string password)
+        public async Task<GenericResult<LoginResponseDto>> Login(string email, string password)
         {
-            var response = new GenericResult<string>()
+            var response = new GenericResult<LoginResponseDto>()
             {
                 IsSuccess = true
             };
@@ -62,7 +62,11 @@ namespace StroyToday.Application.Services
 
             var token = _jwtProvider.GenerateToken(userDto);
 
-            response.Result = token;
+            response.Result = new LoginResponseDto()
+            {
+                Token = token,
+                UserName = userDto.UserName
+            };
 
             return response;
         }

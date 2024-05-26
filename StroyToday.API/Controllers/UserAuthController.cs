@@ -33,11 +33,19 @@ namespace StroyToday.API.Controllers
                 return BadRequest(new { errorMessage = result.ErrorMessage });
             }
 
-            var token = result.Result;
+            var token = result.Result.Token;
 
             HttpContext.Response.Cookies.Append("auth-token", token);
 
-            return Ok();
+            return Ok(new { username = result.Result.UserName });
+        }
+
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            HttpContext.Response.Cookies.Delete("auth-token");
+
+            return Ok(new { message = "Вы успешно вышли из системы" });
         }
     }
 }
