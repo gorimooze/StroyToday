@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using StroyToday.API.Models.Orders;
 using StroyToday.Application.Interfaces.IServices;
 using StroyToday.Common.Auth;
@@ -41,7 +42,14 @@ namespace StroyToday.API.Controllers
         [HttpGet("get-by-id")]
         public async Task<IActionResult> GetById(int orderId)
         {
-            var result = await _orderService.GetById(orderId);
+            var timezone = HttpContext.Request.Cookies["time-zone"];
+
+            if (timezone.IsNullOrEmpty())
+            {
+                return BadRequest(new { errorMessage = "Извините, вам нужно заново авторизоваться" });
+            }
+
+            var result = await _orderService.GetById(orderId, timezone);
 
             if (!result.IsSuccess)
             {
@@ -54,7 +62,14 @@ namespace StroyToday.API.Controllers
         [HttpGet("get-list")]
         public async Task<IActionResult> GetList()
         {
-            var result = await _orderService.GetAll();
+            var timezone = HttpContext.Request.Cookies["time-zone"];
+
+            if (timezone.IsNullOrEmpty())
+            {
+                return BadRequest(new { errorMessage = "Извините, вам нужно заново авторизоваться" });
+            }
+
+            var result = await _orderService.GetAll(timezone);
 
             if (!result.IsSuccess)
             {

@@ -36,6 +36,7 @@ namespace StroyToday.API.Controllers
             var token = result.Result.Token;
 
             HttpContext.Response.Cookies.Append("auth-token", token);
+            HttpContext.Response.Cookies.Append("time-zone", request.TimeZone);
 
             return Ok(new { username = result.Result.UserName });
         }

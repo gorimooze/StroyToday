@@ -2,8 +2,10 @@
 using Microsoft.Extensions.Caching.Distributed;
 using StroyToday.Application.Helpers;
 using StroyToday.Core.Dto;
+using StroyToday.Core.Helpers;
 using StroyToday.Core.IRepositories;
 using System.Text.Json;
+using System;
 
 namespace StroyToday.Application.Services
 {
@@ -29,7 +31,7 @@ namespace StroyToday.Application.Services
             await _cache.RemoveAsync(CacheKey);
         }
 
-        public async Task<GenericResult<OrderDto>> GetById(int orderId)
+        public async Task<GenericResult<OrderDto>> GetById(int orderId, string timeZone)
         {
             var orderDto = await _orderRepository.FindById(orderId);
 
@@ -42,23 +44,30 @@ namespace StroyToday.Application.Services
                 };
             }
 
+            orderDto.CreatedOn = CustomHelper.ConvertToUserTimeZone(orderDto.CreatedOn, timeZone);
+
             return new GenericResult<OrderDto>()
             {
                 Result = orderDto,
                 IsSuccess = true
             };
-
         }
 
-        public async Task<GenericResult<IList<OrderDto>>> GetAll()
+        public async Task<GenericResult<IList<OrderDto>>> GetAll(string timeZone)
         {
             try
             {
-                //Попробуем получить данные из кэша
+                // Попробуем получить данные из кэша
                 var cachedOrderList = await _cache.GetStringAsync(CacheKey);
                 if (!string.IsNullOrEmpty(cachedOrderList))
                 {
-                    var cachedOrders = JsonSerializer.Deserialize<IList<OrderDto>>(cachedOrderList);
+                    var cachedOrders = JsonSerializer.Deserialize<IList<OrderDto>>(cachedOrderList)
+                        .Select(order =>
+                        {
+                            order.CreatedOn = CustomHelper.ConvertToUserTimeZone(order.CreatedOn, timeZone);
+                            return order;
+                        }).ToList();
+
                     return new GenericResult<IList<OrderDto>>()
                     {
                         Result = cachedOrders,
@@ -68,14 +77,19 @@ namespace StroyToday.Application.Services
 
                 // Если данных в кэше нет, получаем из базы данных
                 var list = await _orderRepository.GetAll();
+                var updatedList = list.Select(order =>
+                {
+                    order.CreatedOn = CustomHelper.ConvertToUserTimeZone(order.CreatedOn, timeZone);
+                    return order;
+                }).ToList();
 
                 // Кэшируем данные
-                var listJson = JsonSerializer.Serialize(list);
+                var listJson = JsonSerializer.Serialize(updatedList);
                 await _cache.SetStringAsync(CacheKey, listJson);
 
                 return new GenericResult<IList<OrderDto>>()
                 {
-                    Result = list,
+                    Result = updatedList,
                     IsSuccess = true
                 };
             }
@@ -83,7 +97,7 @@ namespace StroyToday.Application.Services
             {
                 return new GenericResult<IList<OrderDto>>()
                 {
-                    IsSuccess = true,
+                    IsSuccess = false,
                     ErrorMessage = e.Message
                 };
             }

@@ -112,5 +112,29 @@ namespace StroyToday.Core.Helpers
                 return string.Empty;
             }
         }
+
+        public static DateTime? ConvertToUserTimeZone(DateTime? dateTimeUtc, string timeZoneId)
+        {
+            if (dateTimeUtc == null || string.IsNullOrEmpty(timeZoneId))
+            {
+                return null;
+            }
+
+            try
+            {
+                var timeZone = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+                return TimeZoneInfo.ConvertTimeFromUtc(dateTimeUtc.Value, timeZone);
+            }
+            catch (TimeZoneNotFoundException)
+            {
+                // Логирование ошибки или обработка исключения
+                return null;
+            }
+            catch (InvalidTimeZoneException)
+            {
+                // Логирование ошибки или обработка исключения
+                return null;
+            }
+        }
     }
 }

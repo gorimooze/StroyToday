@@ -11,7 +11,7 @@ namespace StroyToday.Application.Interfaces.IServices
     public interface IOrderService
     {
         Task Add(OrderDto orderDto);
-        Task<GenericResult<OrderDto>> GetById(int orderId);
-        Task<GenericResult<IList<OrderDto>>> GetAll();
+        Task<GenericResult<OrderDto>> GetById(int orderId, string timeZone);
+        Task<GenericResult<IList<OrderDto>>> GetAll(string timeZone);
     }
 }
