@@ -1,4 +1,5 @@
-﻿using StroyToday.Core.IRepositories;
+﻿using Microsoft.EntityFrameworkCore;
+using StroyToday.Core.IRepositories;
 using StroyToday.Core.Dto;
 using StroyToday.DataAccess.Models;
 
@@ -23,6 +24,12 @@ namespace StroyToday.DataAccess.Repositories
 
             await _context.Portfolios.AddRangeAsync(portfolioForUserEntity);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<IList<string>> GetImagesByUserId(int userId)
+        {
+            var list = await _context.Portfolios.Where(x => x.UserId == userId).Select(x => x.ImageName).ToListAsync();
+            return list;
         }
     }
 }

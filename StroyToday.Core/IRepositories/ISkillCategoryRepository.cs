@@ -10,5 +10,6 @@ namespace StroyToday.Core.IRepositories
     public interface ISkillCategoryRepository
     {
         Task Add(SkillCategoryDto skillCategoryDto);
+        Task<IList<SkillCategoryDto>> GetAll();
     }
 }

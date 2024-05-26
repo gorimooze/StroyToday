@@ -19,8 +19,13 @@ namespace StroyToday.Application.Services
             _userCvRepository = userCvRepository;
         }
 
-        public async Task Add(UserCvDto userCvDto)
+        public async Task Add(string description, int userId)
         {
+            UserCvDto userCvDto = new UserCvDto()
+            {
+                Description = description,
+                UserId = userId
+            };
             await _userCvRepository.Add(userCvDto);
         }
 

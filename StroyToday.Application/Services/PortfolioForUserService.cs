@@ -9,6 +9,7 @@ using StroyToday.Application.Interfaces;
 using StroyToday.Application.Helpers;
 using StroyToday.Core.Dto;
 using StroyToday.Core.IRepositories;
+using System.Buffers.Text;
 
 namespace StroyToday.Application.Services
 {
@@ -23,36 +24,39 @@ namespace StroyToday.Application.Services
             _portfolioForUserRepository = portfolioForUserRepository;
         }
 
-        public async Task<GenericResponse> Add(string base64, string imageType, int userId)
+        public async Task<GenericResponse> Add(IList<ImageDto> imageDtoList, int userId)
         {
             try
             {
-                // Преобразование base64 в байты
-                var base64Byte = Convert.FromBase64String(base64);
-
-                // Создание потока данных из байтов
-                using var imageStream = new MemoryStream(base64Byte);
-
-                var filetype = imageType.Split('/')[1];
-
-                // Генерация уникального имени файла
-                var fileName = Guid.NewGuid() + $".{filetype}"; // Вы можете изменить расширение файла в зависимости от типа изображения
-
-                var result = await _azureProvider.UploadFileAsync(imageStream, imageType, fileName);
-
-                if (!result.IsSuccess)
+                foreach (var imgDto in imageDtoList)
                 {
-                    return result;
+                    var base64Byte = Convert.FromBase64String(imgDto.Base64);
+
+                    // Создание потока данных из байтов
+                    using var imageStream = new MemoryStream(base64Byte);
+
+                    var filetype = imgDto.ImageType.Split('/')[1];
+
+                    // Генерация уникального имени файла
+                    var fileName = Guid.NewGuid() + $".{filetype}"; // Вы можете изменить расширение файла в зависимости от типа изображения
+
+                    var result = await _azureProvider.UploadFileAsync(imageStream, imgDto.ImageType, fileName);
+
+                    if (!result.IsSuccess)
+                    {
+                        return result;
+                    }
+
+                    // Создание DTO и сохранение в репозитории
+                    var portfolioDto = new PortfolioForUserDto()
+                    {
+                        ImageName = fileName,
+                        UserId = userId
+                    };
+
+                    await _portfolioForUserRepository.Add(portfolioDto);
                 }
-
-                // Создание DTO и сохранение в репозитории
-                var portfolioDto = new PortfolioForUserDto()
-                {
-                    ImageName = fileName,
-                    UserId = userId
-                };
-
-                await _portfolioForUserRepository.Add(portfolioDto);
+                
             }
             catch (Exception ex)
             {
@@ -67,6 +71,37 @@ namespace StroyToday.Application.Services
             {
                 IsSuccess = true
             };
+        }
+
+        public async Task<GenericResult<IList<string>>> GetImageUrlsByUserId(int userId)
+        {
+            try
+            {
+                var listNameImages = await _portfolioForUserRepository.GetImagesByUserId(userId);
+
+                var listToReturnUrls = new List<string>();
+
+                foreach (var nameImg in listNameImages)
+                {
+                    var url = _azureProvider.GetFullPathOnAzureStorage(nameImg);
+                    listToReturnUrls.Add(url);
+                }
+
+                return new GenericResult<IList<string>>()
+                {
+                    Result = listToReturnUrls,
+                    IsSuccess = true
+                };
+            }
+            catch (Exception e)
+            {
+                return new GenericResult<IList<string>>()
+                {
+                    IsSuccess = false,
+                    ErrorMessage = e.Message
+                };
+            }
+
         }
 
         private string GetBase64FileType(string base64String)

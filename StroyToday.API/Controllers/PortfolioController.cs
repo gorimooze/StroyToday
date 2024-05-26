@@ -20,19 +20,19 @@ namespace StroyToday.API.Controllers
             _portfolioForUserService = portfolioForUserService;
         }
 
-        [HttpPost("add-image")]
-        public async Task<IActionResult> AddImage(PortfolioAddRequest request)
-        {
-            var userId = int.Parse(_authHelper.GetUserId(HttpContext));
+        //[HttpPost("add-image")]
+        //public async Task<IActionResult> AddImage(PortfolioAddRequest request)
+        //{
+        //    var userId = int.Parse(_authHelper.GetUserId(HttpContext));
 
-            var result = await _portfolioForUserService.Add(request.Base64, request.ImageType, userId);
+        //    var result = await _portfolioForUserService.Add(request.Base64, request.ImageType, userId);
 
-            if (!result.IsSuccess)
-            {
-                return BadRequest(new { errorMessage = result.Message });
-            }
+        //    if (!result.IsSuccess)
+        //    {
+        //        return BadRequest(new { errorMessage = result.Message });
+        //    }
 
-            return Ok();
-        } 
+        //    return Ok();
+        //} 
     }
 }

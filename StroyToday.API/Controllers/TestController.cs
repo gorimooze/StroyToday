@@ -2,21 +2,23 @@
 using Microsoft.AspNetCore.Mvc;
 using StroyToday.API.Models.Auth;
 using StroyToday.Application.Interfaces;
+using StroyToday.Application.Interfaces.IServices;
 using StroyToday.Application.Services;
 using StroyToday.Common.Auth;
 
 namespace StroyToday.API.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("Test")]
     public class TestController : Controller
     {
         private readonly AuthenticationHelper _authHelper;
+        private readonly ISkillCategoryService _skillCategoryService;
 
-        public TestController(AuthenticationHelper authHelper)
+        public TestController(AuthenticationHelper authHelper, ISkillCategoryService skillCategoryService)
         {
             _authHelper = authHelper;
+            _skillCategoryService = skillCategoryService;
         }
 
         [HttpGet("tiktak")]
@@ -27,6 +29,13 @@ namespace StroyToday.API.Controllers
             var userId = _authHelper.GetUserId(HttpContext);
 
             return Results.Ok(res);
+        }
+
+        [HttpPost("add-skill")]
+        public async Task<IActionResult> AddSkill(string name)
+        {
+            await _skillCategoryService.Add(name);
+            return Ok();
         }
     }
 }

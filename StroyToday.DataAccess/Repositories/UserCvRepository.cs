@@ -35,7 +35,7 @@ namespace StroyToday.DataAccess.Repositories
         {
             var userCvEntity = await _context.UserCVs
                 .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.Id == userCvId);
+                .FirstOrDefaultAsync(u => u.UserId == userCvId);
 
             if (userCvEntity == null)
             {

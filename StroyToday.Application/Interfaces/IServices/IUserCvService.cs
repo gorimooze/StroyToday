@@ -10,7 +10,7 @@ namespace StroyToday.Application.Interfaces.IServices
 {
     public interface IUserCvService
     {
-        Task Add(UserCvDto userCvDto);
+        Task Add(string description, int userId);
         Task<GenericResult<UserCvDto>> GetByUserId(int userId);
     }
 }

@@ -1,9 +1,5 @@
 ﻿using StroyToday.Core.IRepositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using StroyToday.Core.Dto;
 using StroyToday.DataAccess.Models;
 
@@ -28,6 +24,20 @@ namespace StroyToday.DataAccess.Repositories
 
             await _context.UserToSkillCategories.AddRangeAsync(userToSkillCategoryEntity);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<IList<SkillCategoryDto>> GetAllByUserId(int userId)
+        {
+            var list = await (from utsc in _context.UserToSkillCategories
+                join sc in _context.SkillCategories on utsc.SkillCategoryId equals sc.Id
+                where utsc.UserId == userId
+                select new SkillCategoryDto
+                {
+                    Id = sc.Id,
+                    Name = sc.Name
+                }).ToListAsync();
+
+            return list;
         }
     }
 }

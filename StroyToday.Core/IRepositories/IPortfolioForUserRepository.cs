@@ -10,5 +10,6 @@ namespace StroyToday.Core.IRepositories
     public interface IPortfolioForUserRepository
     {
         Task Add(PortfolioForUserDto portfolioForUserDto);
+        Task<IList<string>> GetImagesByUserId(int userId);
     }
 }
