@@ -25,7 +25,7 @@ namespace StroyToday.Application.Services
         {
             orderDto.CreatedOn = DateTime.UtcNow;
 
-            await _orderRepository.Add(orderDto);
+            await _orderRepository.Add(orderDto).ConfigureAwait(false);
 
             // Очистка кэша, так как данные изменились
             await _cache.RemoveAsync(CacheKey);
@@ -77,15 +77,18 @@ namespace StroyToday.Application.Services
 
                 // Если данных в кэше нет, получаем из базы данных
                 var list = await _orderRepository.GetAll();
+
+                // Кэшируем данные
+                var listJson = JsonSerializer.Serialize(list);
+                await _cache.SetStringAsync(CacheKey, listJson);
+
                 var updatedList = list.Select(order =>
                 {
                     order.CreatedOn = CustomHelper.ConvertToUserTimeZone(order.CreatedOn, timeZone);
                     return order;
                 }).ToList();
 
-                // Кэшируем данные
-                var listJson = JsonSerializer.Serialize(updatedList);
-                await _cache.SetStringAsync(CacheKey, listJson);
+                
 
                 return new GenericResult<IList<OrderDto>>()
                 {
